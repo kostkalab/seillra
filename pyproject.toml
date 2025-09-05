@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seilora"
+version = "1.0.0"
+description = "Easy access to a low-rank approximation of Sei"
+readme = "README_dist.md"
+dependencies = [
+    "torch",
+    "numpy",
+    "scipy",
+    "requests",
+    "platformdirs",
+    "tqdm",
+    "pyyaml",
+    "seimodel @ git+https://github.com/kostkalab/seimodel.git",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["dist"]

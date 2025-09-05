@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: seilora
+Version: 1.0.0
+Summary: Easy access to a low-rank approximation of Sei
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: torch
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: requests
+Requires-Dist: platformdirs
+Requires-Dist: tqdm
+Requires-Dist: pyyaml
+Requires-Dist: seimodel@ git+https://github.com/kostkalab/seimodel.git
+Dynamic: license-file

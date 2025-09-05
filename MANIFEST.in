@@ -1,0 +1,7 @@
+# This command explicitly includes the entire directory and all of its contents
+graft dist/seilora
+
+#- to include the README in the source distribution
+exclude README.md
+include LICENSE.TXT
+prune src

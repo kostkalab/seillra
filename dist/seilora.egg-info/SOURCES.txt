@@ -1,0 +1,14 @@
+LICENSE.txt
+MANIFEST.in
+README_dist.md
+pyproject.toml
+dist/seilora.egg-info/PKG-INFO
+dist/seilora.egg-info/SOURCES.txt
+dist/seilora.egg-info/dependency_links.txt
+dist/seilora.egg-info/requires.txt
+dist/seilora.egg-info/top_level.txt
+dist/seilora/dat/config.yaml
+dist/seilora/src/get_models.py
+dist/seilora/src/model_loading.py
+dist/seilora/src/sei_head_lora.py
+dist/seilora/src/__pycache__/sei_head_lora.cpython-312.pyc
