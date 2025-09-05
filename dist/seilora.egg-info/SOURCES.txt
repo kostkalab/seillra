@@ -2,6 +2,7 @@ LICENSE.txt
 MANIFEST.in
 README_dist.md
 pyproject.toml
+dist/seilora/__init__.py
 dist/seilora.egg-info/PKG-INFO
 dist/seilora.egg-info/SOURCES.txt
 dist/seilora.egg-info/dependency_links.txt
