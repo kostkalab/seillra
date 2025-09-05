@@ -10,7 +10,6 @@ dist/seilora.egg-info/requires.txt
 dist/seilora.egg-info/top_level.txt
 dist/seilora/dat/config.yaml
 dist/seilora/src/download_from_gdrive.py
-dist/seilora/src/ff
 dist/seilora/src/get_models.py
 dist/seilora/src/model_loading.py
 dist/seilora/src/sei_head_lora.py
