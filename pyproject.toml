@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "seilora"
-version = "1.0.6"
+version = "1.0.7"
 description = "Easy access to a low-rank approximation of Sei"
 readme = "README_dist.md"
 dependencies = [

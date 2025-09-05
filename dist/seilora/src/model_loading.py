@@ -27,6 +27,9 @@ def download_file_atomic(url: str, dest: Path, *, session: requests.Session,
         if "drive.google.com" in url:
             import re
             match = re.search(r'id=([\w-]+)', url)
+            if not match:
+                # Try /file/d/FILEID/ pattern
+                match = re.search(r'/file/d/([\w-]+)', url)
             if match:
                 file_id = match.group(1)
                 logger.info(f"Detected Google Drive URL, using download_from_gdrive for file_id={file_id}")
@@ -39,6 +42,8 @@ def download_file_atomic(url: str, dest: Path, *, session: requests.Session,
                 else:
                     logger.error(f"Google Drive download failed for {url}")
                     raise RuntimeError(f"Google Drive download failed for {url}")
+            else:
+                logger.info(f"Google Drive URL detected but no file_id found in url: {url}")
         # Standard download
         with session.get(url, stream=True, timeout=timeout) as r:
             r.raise_for_status()
