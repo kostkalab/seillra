@@ -1,3 +1,4 @@
+from . import download_from_gdrive as dfgd
 from __future__ import annotations
 from pathlib import Path
 from typing import Optional
@@ -21,42 +22,25 @@ def download_file_atomic(url: str, dest: Path, *, session: requests.Session,
     tmp = dest.with_suffix(dest.suffix + ".part")
     logger.info(f"Starting download: {url} -> {dest}")
     success = False
-    def extract_direct_download_params(html_content: str):
-        import re
-        form_match = re.search(r'<form id="download-form".*?</form>', html_content, re.DOTALL)
-        if form_match:
-            form_html = form_match.group(0)
-            file_id_match = re.search(r'name="id"\s+value="([^"]+)"', form_html)
-            confirm_match = re.search(r'name="confirm"\s+value="([^"]+)"', form_html)
-            if file_id_match and confirm_match:
-                return {'id': file_id_match.group(1), 'confirm': confirm_match.group(1)}
-        return None
-
     try:
-        with session.get(url, stream=True, timeout=timeout) as r:
-            # Google Drive virus scan warning handling
-            is_gdrive = "drive.google.com" in url
-            if is_gdrive and 'Virus scan warning' in r.text and 'download-form' in r.text:
-                logger.info("Google Drive virus scan warning detected. Attempting to extract final download URL.")
-                params = extract_direct_download_params(r.text)
-                if params:
-                    import urllib.parse
-                    query = urllib.parse.urlencode({'export': 'download', **params})
-                    final_url = f"https://drive.google.com/uc?{query}"
-                    with session.get(final_url, stream=True, timeout=timeout) as final_r:
-                        final_r.raise_for_status()
-                        with tmp.open('wb') as f:
-                            for chunk in final_r.iter_content(chunk_size=chunk_size):
-                                if chunk:
-                                    f.write(chunk)
+        # Google Drive handling
+        if "drive.google.com" in url:
+            import re
+            match = re.search(r'id=([\w-]+)', url)
+            if match:
+                file_id = match.group(1)
+                logger.info(f"Detected Google Drive URL, using download_from_gdrive for file_id={file_id}")
+                ok = dfgd.download_from_gdrive(file_id, tmp)
+                if ok:
                     tmp.replace(dest)
                     logger.info(f"Download complete: {dest}")
                     success = True
                     return
                 else:
-                    logger.error("Could not extract download parameters from Google Drive warning page.")
-                    raise RuntimeError("Failed to extract Google Drive download parameters.")
-            # Normal download
+                    logger.error(f"Google Drive download failed for {url}")
+                    raise RuntimeError(f"Google Drive download failed for {url}")
+        # Standard download
+        with session.get(url, stream=True, timeout=timeout) as r:
             r.raise_for_status()
             with tmp.open('wb') as f:
                 for chunk in r.iter_content(chunk_size=chunk_size):
