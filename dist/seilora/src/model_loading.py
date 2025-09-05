@@ -39,6 +39,10 @@ def download_file_atomic(url: str, dest: Path, *, session: requests.Session,
             tmp.unlink(missing_ok=True)
             logger.info(f"Cleaned up partial file: {tmp}")
 
+def url_to_cache_filename(url: str, suffix: str = "") -> str:
+    url_hash = hashlib.sha256(url.encode("utf-8")).hexdigest()[:16]
+    return f"url_{url_hash}{suffix}"
+
 # --- Checksum handling ---
 def read_or_fetch_checksum(*, url_wts_sha: str, cache_dir: Path,
                            session: requests.Session, expected: Optional[str],
@@ -56,8 +60,8 @@ def read_or_fetch_checksum(*, url_wts_sha: str, cache_dir: Path,
     if expected:
         return expected
 
-    filename = Path(url_wts_sha).name
-    checksum_path = cache_dir / filename
+    checksum_filename = url_to_cache_filename(url_wts_sha, suffix="_sha")
+    checksum_path = cache_dir / checksum_filename
     if checksum_path.exists():
         return checksum_path.read_text().split()[0].strip()
 
@@ -73,18 +77,18 @@ def ensure_weight_file(url_wts: str, cache_dir: Path,
     """Ensure weight file exists, downloading and verifying if needed.
     Returns path to verified weight file.
     """
-    filename = Path(url_wts).name
-    weight_path = cache_dir / filename
+    weight_filename = url_to_cache_filename(url_wts, suffix="_wts")
+    weight_path = cache_dir / weight_filename
     if weight_path.exists() and verify and expected_sha256:
         actual = calculate_file_sha256(weight_path)
         if actual == expected_sha256:
-            logger.info(f"Checksum verified for {filename}: {actual}")
+            logger.info(f"Checksum verified for {weight_filename}: {actual}")
             return weight_path
         weight_path.unlink(missing_ok=True)
-        logger.error(f"Checksum mismatch for {filename}: expected {expected_sha256}, got {actual}. File deleted.")
-        raise ValueError(f"Checksum mismatch for {filename}. Consider clearing cache.")
+        logger.error(f"Checksum mismatch for {weight_filename}: expected {expected_sha256}, got {actual}. File deleted.")
+        raise ValueError(f"Checksum mismatch for {weight_filename}. Consider clearing cache.")
     elif weight_path.exists() and not verify:
-        logger.info(f"File exists and verification skipped: {filename}")
+        logger.info(f"File exists and verification skipped: {weight_filename}")
         return weight_path
     cache_dir.mkdir(parents=True, exist_ok=True)
     download_file_atomic(url_wts, weight_path, session=session, timeout=timeout)
@@ -92,9 +96,9 @@ def ensure_weight_file(url_wts: str, cache_dir: Path,
         actual = calculate_file_sha256(weight_path)
         if actual != expected_sha256:
             weight_path.unlink(missing_ok=True)
-            logger.error(f"Checksum mismatch for {filename}: expected {expected_sha256}, got {actual}. File deleted.")
-            raise ValueError(f"Checksum mismatch for {filename}: expected {expected_sha256} got {actual}")
-        logger.info(f"Checksum verified for {filename}: {actual}")
+            logger.error(f"Checksum mismatch for {weight_filename}: expected {expected_sha256}, got {actual}. File deleted.")
+            raise ValueError(f"Checksum mismatch for {weight_filename}: expected {expected_sha256} got {actual}")
+        logger.info(f"Checksum verified for {weight_filename}: {actual}")
     logger.info(f"Weight file ready: {weight_path}")
     return weight_path
 
