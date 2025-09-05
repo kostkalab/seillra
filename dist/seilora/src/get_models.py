@@ -20,7 +20,7 @@ def get_sei_trunk_q():
     """
     Returns a quantized SEI trunk model with weights loaded from config URLs.
     """
-    stm = sm.Trunk()
+    stm = sm.SeiTrunk()
     stm.to('cpu')
     example_input = torch.zeros(1, 4, 4096)
     _ = stm(example_input) #- to initialize bsplines
