@@ -6,7 +6,7 @@ import yaml
 from importlib import resources
 from  .model_loading import load_model_state_dict
 
-CONFIG_FILE = resources.files(__package__).replace('.src', '.dat').joinpath("config.yaml")
+CONFIG_FILE = resources.files(__package__.replace('.src', '.dat')).joinpath("config.yaml")
 
 # - read in configuration
 with open(CONFIG_FILE, "r") as f:
