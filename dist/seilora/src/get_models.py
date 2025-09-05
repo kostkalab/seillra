@@ -42,8 +42,8 @@ def get_sei_head_lora(k:int=16):
     mod = SeiHeadLora(k=k)
     
     return load_model_state_dict(mod,
-                                    url_wts=CONFIG[f"fn_sei_head_lora_{k}_wts"],
-                                    url_wts_sha=CONFIG[f"fn_sei_head_lora_{k}_sha"],
+                                    url_wts=CONFIG[f"fn_head_lora_{k}_wts"],
+                                    url_wts_sha=CONFIG[f"fn_head_lora_{k}_sha"],
                                     app_name=APP_NAME,
                                     version=VERSION)
 
