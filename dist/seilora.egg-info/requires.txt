@@ -5,4 +5,4 @@ requests
 platformdirs
 tqdm
 pyyaml
-seimodel@ git+https://github.com/kostkalab/seimodel.git
+seimodel@ git+ssh://git@github.com/kostkalab/seimodel.git

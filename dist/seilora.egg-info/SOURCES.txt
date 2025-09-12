@@ -13,5 +13,3 @@ dist/seilora/src/download_from_gdrive.py
 dist/seilora/src/get_models.py
 dist/seilora/src/model_loading.py
 dist/seilora/src/sei_head_lora.py
-dist/seilora/src/__pycache__/download_from_gdrive.cpython-312.pyc
-dist/seilora/src/__pycache__/sei_head_lora.cpython-312.pyc
