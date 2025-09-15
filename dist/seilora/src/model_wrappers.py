@@ -41,32 +41,38 @@ class SeiLoraWrapper(nn.Module):
         if self.projection:
             if self.projection.mode == "variant":
                 x_r, x_a = x
-                for_x_r = self.qtrunk(x_r)
+                with torch.no_grad():
+                    for_x_r = self.qtrunk(x_r)
                 for_x_r = self.head(for_x_r)
 
                 rev_x_r = torch.flip(x_r, dims=[1, 2])
-                rev_x_r = self.qtrunk(rev_x_r)
+                with torch.no_grad():
+                    rev_x_r = self.qtrunk(rev_x_r)
                 rev_x_r = self.head(rev_x_r)
 
                 out_r = (for_x_r + rev_x_r) / 2
 
 
-                for_x_a = self.qtrunk(x_a)
+                with torch.no_grad():
+                    for_x_a = self.qtrunk(x_a)
                 for_x_a = self.head(for_x_a)
 
                 rev_x_a = torch.flip(x_a, dims=[1, 2])
-                rev_x_a = self.qtrunk(rev_x_a)
+                with torch.no_grad():
+                    rev_x_a = self.qtrunk(rev_x_a)
                 rev_x_a = self.head(rev_x_a)
 
                 out_a = (for_x_a + rev_x_a) / 2
                 out = (out_r, out_a)
                 out = self.proj(out)
             else: ## default to sequence
-                for_x = self.qtrunk(x)
+                with torch.no_grad():
+                    for_x = self.qtrunk(x)
                 for_x = self.head(for_x)
 
                 rev_x = torch.flip(x, dims=[1, 2])
-                rev_x = self.qtrunk(rev_x)
+                with torch.no_grad():
+                    rev_x = self.qtrunk(rev_x)
                 rev_x = self.head(rev_x)
 
                 out = (for_x + rev_x) / 2
@@ -74,31 +80,37 @@ class SeiLoraWrapper(nn.Module):
         else:
             if self.mode == "variant":
                 x_r, x_a = x
-                for_x_r = self.qtrunk(x_r)
+                with torch.no_grad():
+                    for_x_r = self.qtrunk(x_r)
                 for_x_r = self.head(for_x_r)
 
                 rev_x_r = torch.flip(x_r, dims=[1, 2])
-                rev_x_r = self.qtrunk(rev_x_r)
+                with torch.no_grad():
+                    rev_x_r = self.qtrunk(rev_x_r)
                 rev_x_r = self.head(rev_x_r)
 
                 out_r = (for_x_r + rev_x_r) / 2
 
 
-                for_x_a = self.qtrunk(x_a)
+                with torch.no_grad():
+                    for_x_a = self.qtrunk(x_a)
                 for_x_a = self.head(for_x_a)
 
                 rev_x_a = torch.flip(x_a, dims=[1, 2])
-                rev_x_a = self.qtrunk(rev_x_a)
+                with torch.no_grad():
+                    rev_x_a = self.qtrunk(rev_x_a)
                 rev_x_a = self.head(rev_x_a)
 
                 out_a = (for_x_a + rev_x_a) / 2
                 out = (out_r, out_a)
             else:
-                for_x = self.qtrunk(x)
+                with torch.no_grad():
+                    for_x = self.qtrunk(x)
                 for_x = self.head(for_x)
 
                 rev_x = torch.flip(x, dims=[1, 2])
-                rev_x = self.qtrunk(rev_x)
+                with torch.no_grad():
+                    rev_x = self.qtrunk(rev_x)
                 rev_x = self.head(rev_x)
 
                 out = (for_x + rev_x) / 2
