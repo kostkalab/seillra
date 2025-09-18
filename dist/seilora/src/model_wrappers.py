@@ -45,7 +45,7 @@ class SeiLoraWrapper(nn.Module):
         and averages the results. This is fed into the projector.
         """
         if self.projection:
-            if self.projection.mode == "variant":
+            if self.proj.mode == "variant":
                 x_r, x_a = x
                 for_x_r = self.trunk(x_r)
                 for_x_r = self.head(for_x_r)
