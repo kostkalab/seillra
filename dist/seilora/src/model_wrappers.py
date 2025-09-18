@@ -8,6 +8,7 @@ import torch
 # import sei_projection as sm
 
 import os, sys
+from typing import Optional, Literal
 
 # here = os.path.dirname(os.path.abspath(__file__))
 # seimodel_root = os.path.abspath(os.path.join(here, '../../../../seimodel-dev/dist'))
@@ -15,7 +16,7 @@ import os, sys
 
 # from seimodel.src import get_seimodels as sm
 class SeiLoraWrapper(nn.Module):
-    def __init__(self, k: int, ft=None: str, projection = True, mode = "sequence", device = "cpu"):
+    def __init__(self, k: int, ft: Optional[str] = None, projection: bool = True, mode: Literal["sequence", "variant"] = "sequence", device: str = "cpu"):
         super().__init__()
         self.device = device
         self.mode = mode
