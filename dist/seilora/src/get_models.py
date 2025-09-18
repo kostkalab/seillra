@@ -36,14 +36,16 @@ def get_sei_trunk_q():
         version=VERSION
     )
 
-def get_sei_head_lora(k:int=16):
+def get_sei_head_lora(k:int=16, ft:str=None):
     #- a sei head lora model with rank k
     from .sei_head_lora import SeiHeadLora
     mod = SeiHeadLora(k=k)
     
+    label = f"{k}_{ft}" if ft is not None else str(k)
+    
     return load_model_state_dict(mod,
-                                    url_wts=CONFIG[f"fn_head_lora_{k}_wts"],
-                                    url_wts_sha=CONFIG[f"fn_head_lora_{k}_sha"],
+                                    url_wts=CONFIG[f"fn_head_lora_{label}_wts"],
+                                    url_wts_sha=CONFIG[f"fn_head_lora_{label}_sha"],
                                     app_name=APP_NAME,
                                     version=VERSION)
 
