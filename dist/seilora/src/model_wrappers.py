@@ -25,7 +25,7 @@ class SeiLoraWrapper(nn.Module):
         if self.device == "cpu":
             self.trunk = get_sei_trunk_q()
         else:
-            self.trunk = sm.get_sei_trunk()
+            self.trunk = sm.get_sei_trunk().load_weights()
             
         if self.projection:
             self.proj = sm.get_sei_projection().load_weights()
