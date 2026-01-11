@@ -1,5 +1,5 @@
 # This command explicitly includes the entire directory and all of its contents
-graft dist/seilora
+graft dist/seillra
 
 #- to include the README in the source distribution
 exclude README.md

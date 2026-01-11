@@ -1,4 +1,4 @@
-from .get_models import get_sei_trunk_q, get_sei_head_lora
+from .get_models import get_sei_trunk_q, get_sei_head_llra, get_sei_head_llra_q
 import torch.nn as nn
 import seimodel as sm
 import torch
@@ -15,17 +15,18 @@ from typing import Optional, Literal
 # sys.path.append(seimodel_root)
 
 # from seimodel.src import get_seimodels as sm
-class SeiLoraWrapper(nn.Module):
-    def __init__(self, k: int, ft: Optional[str] = None, projection: bool = True, mode: Literal["sequence", "variant"] = "sequence", device: str = "cpu"):
+class Sei_LLRA(nn.Module):
+    def __init__(self, k: int, projection: bool = True, mode: Literal["sequence", "variant"] = "sequence", device: str = "cpu"):
         super().__init__()
         self.device = device
         self.mode = mode
         self.projection = projection
-        self.head = get_sei_head_lora(k, ft)
         if self.device == "cpu":
             self.trunk = get_sei_trunk_q()
+            self.head = get_sei_head_llra_q(k)
         else:
             self.trunk = sm.get_sei_trunk().load_weights()
+            self.head = get_sei_head_llra(k)
             
         if self.projection:
             self.proj = sm.get_sei_projection().load_weights()
