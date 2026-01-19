@@ -17,7 +17,7 @@ and then
 ```python
 import torch
 import collections
-import seilllra as sl
+import seillra as sl
 import seimodel as sm
 
 # Get sub-models (e.g., quantized turnk, approximate head, full projection)
@@ -41,4 +41,4 @@ rank = 256
 model = sl.Sei_LLRA(k=rank, projection=True, device = 'cpu')
 ```
 
-See `sample_usage.ipynb` for a variant effect prediciton example.
+See `dist/sample_usage.ipynb` for a variant effect prediciton example.
