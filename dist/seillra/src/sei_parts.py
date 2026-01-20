@@ -333,7 +333,7 @@ class SeiTrunk(nn.Module):
         out = cat_out4 + dconv_out5
         
         spline_out = self.spline_tr(out)
-        reshape_out = spline_out.view(spline_out.size(0), 960 * self._spline_df)
+        reshape_out = spline_out.flatten(start_dim=1)
         
         return reshape_out
 
@@ -447,3 +447,51 @@ class SeiProjectionQuantizable(nn.Module):
             self.mode = mode
         else:
             print(f"Mode options are: \'sequence\' or \'variant\'. Keeping current mode as {self.mode}")
+
+
+class QuantizedSeiHead(torch.nn.Module):
+    target_annot = read_target_annot(TARGET_ANNOT_FILE)
+    def __init__(self, model: nn.Module):
+        super(QuantizedSeiHead, self).__init__()
+
+        self.model = model
+
+    def forward(self, x):
+        return self.model(x)
+
+    def search_target_annot(
+        self, pattern: str, field: str = "context", return_annot: bool = False
+    ) -> list[int] | tuple[list[int], dict[str, list[str]]]:
+        """
+        Search for a regex pattern in the specified field of target_annot.
+        Returns a list of indices where the pattern matches.
+        If return_annot is True, also returns a dict with annotations for
+        the matching entries.
+        """
+
+        regex = re.compile(pattern)
+        # Assume target_annot is a list of dicts with keys: 'context', 'assay', 'info'
+        matches = []
+        for idx, annot in enumerate(self.target_annot):
+            # - fixme: seems horribly inefficient to seperately search each field...
+            if field in annot and regex.search(str(annot[field])):
+                matches.append(idx)
+        if return_annot:
+            # Slice all lists in the dict to only matching indices
+            matched = {k: [v[i] for i in matches] for k, v in self.target_annot.items()}
+            return matches, matched
+        return matches
+
+
+class QuantizedSeiProjection(nn.Module):
+
+    class_annot = read_class_annot(CLASS_ANNOT_FILE)
+    histone_indices = torch.from_numpy(np.load(HISTONE_INDEX_FILE))
+
+    def __init__(self, model: nn.Module):
+        super(QuantizedSeiProjection, self).__init__()
+
+        self.model = model
+
+    def forward(self, x):
+        return self.model(x)

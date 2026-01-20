@@ -83,7 +83,7 @@ def get_sei_head_llra(k:int|None =256, quant: Literal["CPU", "GPU_fp16", "GPU_in
     #- a sei head lora model with rank k
     if k is not None:
         if quant == "CPU":
-            from .sei_parts import SeiHeadLLRA
+            from .sei_parts import SeiHeadLLRA, QuantizedSeiHead
 
             stm = SeiHeadLLRA(k=k)
             stm.to('cpu')
@@ -111,13 +111,14 @@ def get_sei_head_llra(k:int|None =256, quant: Literal["CPU", "GPU_fp16", "GPU_in
                 prepared = quant_fx.prepare_fx(stm, qconfig_mapping, example_input)
                 quantized = quant_fx.convert_fx(prepared)
                 label = str(k)
-                return load_model_state_dict(
+                model =  load_model_state_dict(
                     quantized,
                     url_wts=CONFIG[f"fn_head_lora_{label}_q-random-5k_wts"],
                     url_wts_sha=CONFIG[f"fn_head_lora_{label}_q-random-5k_sha"],
                     app_name=APP_NAME,
                     version=VERSION
                 )
+                return QuantizedSeiHead(model)
         else:
             from .sei_parts import SeiHeadLLRA
             mod = SeiHeadLLRA(k=k)
@@ -139,7 +140,7 @@ def get_sei_head_llra(k:int|None =256, quant: Literal["CPU", "GPU_fp16", "GPU_in
     
     else:
         if quant == "CPU":
-            from .sei_parts import SeiHead
+            from .sei_parts import SeiHead, QuantizedSeiHead
 
             stm = SeiHead()
             stm.to('cpu')
@@ -167,13 +168,14 @@ def get_sei_head_llra(k:int|None =256, quant: Literal["CPU", "GPU_fp16", "GPU_in
                 prepared = quant_fx.prepare_fx(stm, qconfig_mapping, example_input)
                 quantized = quant_fx.convert_fx(prepared)
                 label = str(k)
-                return load_model_state_dict(
+                model =  load_model_state_dict(
                     quantized,
                     url_wts=CONFIG[f"fn_head_q-random-5k_wts"],
                     url_wts_sha=CONFIG[f"fn_head_q-random-5k_sha"],
                     app_name=APP_NAME,
                     version=VERSION
                 )
+                return QuantizedSeiHead(model)
         else:
             from .sei_parts import SeiHead
             mod = SeiHead()
@@ -199,7 +201,7 @@ def get_sei_projection(quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CP
     Returns a quantized SEI projection model with weights loaded from config URLs.
     """
     if quant == "CPU":
-        from .sei_parts import SeiProjectionQuantizable
+        from .sei_parts import SeiProjectionQuantizable, QuantizedSeiProjection
         stm = SeiProjectionQuantizable()
         stm.to('cpu')
         example_input = torch.zeros(1, 21907)
@@ -233,7 +235,7 @@ def get_sei_projection(quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CP
                 version=VERSION
             )
             model.set_mode(mode)
-            return model
+            return QuantizedSeiProjection(model)
     else:
         from .sei_parts import SeiProjection
         stm = SeiProjection()
