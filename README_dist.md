@@ -54,6 +54,8 @@ For GPU-compatible model we provide the following options via the `quant` parame
 - GPU fp16 quantization: `quant = "GPU_fp16"`
 - GPU int8 quantization: `quant = "GPU_int8"`
 
+Select from ranks 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, or None (for full model).
+
 For more detailed examples including applying SeiLLRA to data, please see the following notebooks:
 
 - Chromatin states and sequence classes: [basic_notebook.ipynb](./docs/basic_usage.ipynb)

@@ -22,7 +22,7 @@ VERSION = str(CONFIG["version"])
 #- model factory for quantized trunk model
 
     
-def get_sei_trunk(quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CPU"):
+def get_sei_trunk(quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CPU", compile : bool = True):
     """
     Returns a quantized SEI trunk model with weights loaded from config URLs.
     """
@@ -74,15 +74,16 @@ def get_sei_trunk(quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CPU"):
             model= model.half()
         elif quant == "GPU_int8":
             model = convert_to_int8(model.half())
-        model = torch.compile(model, mode="reduce-overhead")
+        if compile:
+            model = torch.compile(model, mode="reduce-overhead")
         return model
 
 
-def get_sei_head_llra(k:int|None =256, quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CPU"):
+def get_sei_head_llra(k:int|None =256, quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CPU", compile : bool = True):
     #- a sei head lora model with rank k
     if k is not None:
         if quant == "CPU":
-            from .sei_head_llra import SeiHeadLLRA
+            from .sei_parts import SeiHeadLLRA
 
             stm = SeiHeadLLRA(k=k)
             stm.to('cpu')
@@ -118,7 +119,7 @@ def get_sei_head_llra(k:int|None =256, quant: Literal["CPU", "GPU_fp16", "GPU_in
                     version=VERSION
                 )
         else:
-            from .sei_head_llra import SeiHeadLLRA
+            from .sei_parts import SeiHeadLLRA
             mod = SeiHeadLLRA(k=k)
             
             label = str(k)
@@ -132,7 +133,8 @@ def get_sei_head_llra(k:int|None =256, quant: Literal["CPU", "GPU_fp16", "GPU_in
                 model= model.half()
             elif quant == "GPU_int8":
                 model = convert_to_int8(model.half())
-            model = torch.compile(model, mode="reduce-overhead")
+            if compile:
+                model = torch.compile(model, mode="reduce-overhead")
             return model
     
     else:
@@ -185,13 +187,14 @@ def get_sei_head_llra(k:int|None =256, quant: Literal["CPU", "GPU_fp16", "GPU_in
                 model= model.half()
             elif quant == "GPU_int8":
                 model = convert_to_int8(model.half())
-            model = torch.compile(model, mode="reduce-overhead")
+            if compile:
+                model = torch.compile(model, mode="reduce-overhead")
             return model
 
 
 
 
-def get_sei_projection(quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CPU", mode: Literal["sequence", "variant"] = "sequence",):
+def get_sei_projection(quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CPU", mode: Literal["sequence", "variant"] = "sequence", compile : bool = True):
     """
     Returns a quantized SEI projection model with weights loaded from config URLs.
     """
@@ -246,7 +249,8 @@ def get_sei_projection(quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CP
         elif quant == "GPU_int8":
             model = convert_to_int8(model.half())
         model.set_mode(mode)
-        model = torch.compile(model, mode="reduce-overhead")
+        if compile:
+            model = torch.compile(model, mode="reduce-overhead")
         return model
 
 
