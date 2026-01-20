@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: seillra
-Version: 1.3.3
+Version: 1.3.4
 Summary: Easy access to a low-rank approximation of Sei
 Description-Content-Type: text/markdown
 License-File: LICENSE.txt
@@ -17,18 +17,23 @@ Dynamic: license-file
 
 ## Introduction
 
-This package contains a low-rank approximation of (the head of) the Sei model.
+This package exposes the Sei trunk–head–projection pipeline where the head is replaced with post-hoc low-rank linear layers, and makes both full-precision and quantized (CPU/GPU-friendly) variants of each sub-model available. Refer to the [Sei-LLRA preprint](tbd) for architectural and training details.
 
 
-## Usage
 
-Install with
+
+## Installation
+
+Install from github with:
 
 ```bash
 $ pip install git+https://github.com/kostkalab/seillra.git
 ```
 
-and then
+## Usage
+
+Basic usage for creating a quantized Sei model, with rank-64 approximation of linear layers, intended to run on the CPU.
+The following demonstrates access to the individual components of Sei:
 
 ```python
 import torch
@@ -36,25 +41,38 @@ import collections
 import seillra as sl
 import seimodel as sm
 
-# Get sub-models (e.g., quantized turnk, approximate head, full projection)
-mod_trunk = sl.get_sei_trunk_q()
-mod_head  = sl.get_sei_head_llra_q(k=16)
-mod_projection = sm.get_sei_projection().load_weights()
+# Get component models (trunk, head, projection)
+mod_trunk = sl.get_trunk(quant='CPU')
+mod_head  = sl.get_head_llra(k=16, quant='CPU')
+mod_projection = sl.get_projection(quant='CPU')
 
-#- Make a full model
+
+#- Constuct the combeined model from its parts:
 mod = torch.nn.Sequential(collections.OrderedDict([
     ('trunk', mod_trunk),
     ('head', mod_head),
     ('projection', mod_projection)
 ]))
-
-#...
 ```
-Or, 
+
+Alternatively, there is a convenience function:
+
 
 ```python
-rank = 256
-model = sl.Sei_LLRA(k=rank, projection=True, device = 'cpu')
+mod = sl.Sei_LLRA(k=64, projection=True, quant = 'CPU')
 ```
 
-See `dist/sample_usage.ipynb` for a variant effect prediciton example.
+The PyTorch model `mod` is then ready for inference tasks on the CPU.
+For GPU-compatible model we provide the following options via the `quant` parameter:
+
+- No quantization: `quant = None`
+- CPU quantization: `quant = "CPU"`
+- GPU fp16 quantization: `quant = "GPU_fp16"`
+- GPU int8 quantization: `quant = "GPU_int8"`
+
+For more detailed examples including applying SeiLLRA to data, please see the following notebooks:
+
+- Chromatin states and sequence classes: [basic_notebook.ipynb](./docs/basic_usage.ipynb)
+- Variant effects: [variant_notebook.ipynb](./docs/variant_usage.ipynb)
+
+
