@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: seillra
-Version: 1.4.2
+Version: 1.4.4
 Summary: Easy access to a low-rank approximation of Sei
 Description-Content-Type: text/markdown
 License-File: LICENSE.txt
@@ -11,7 +11,7 @@ Requires-Dist: requests
 Requires-Dist: platformdirs
 Requires-Dist: tqdm
 Requires-Dist: pyyaml
-Requires-Dist: seimodel@ git+https://github.com/kostkalab/seimodel.git
+Requires-Dist: bitsandbytes
 Dynamic: license-file
 
 
