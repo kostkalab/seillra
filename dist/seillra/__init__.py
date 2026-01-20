@@ -1,7 +1,8 @@
-from .src.get_models import *
-from .src.sei_head_llra import *
-from .src.model_loading import download_file_atomic
-from .src.model_wrappers import *
+from seillra.src.get_models import *
+from seillra.src.sei_head_llra import *
+from seillra.src.model_loading import download_file_atomic
+from seillra.src.model_wrappers import *
+from seillra.src.sei_parts import *
 # Optionally, define __all__ for explicit exports
 __all__ = [
     'SeiHeadLLRA',

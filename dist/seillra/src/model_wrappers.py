@@ -1,6 +1,5 @@
-from .get_models import get_sei_trunk_q, get_sei_head_llra, get_sei_head_llra_q
+from .get_models import get_sei_head_llra, get_sei_projection, get_sei_trunk
 import torch.nn as nn
-import seimodel as sm
 import torch
 # import os, sys
 # print(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../../seimodel-dev/dist/seimodel/src')))
@@ -16,24 +15,28 @@ from typing import Optional, Literal
 
 # from seimodel.src import get_seimodels as sm
 class Sei_LLRA(nn.Module):
-    def __init__(self, k: int, projection: bool = True, mode: Literal["sequence", "variant"] = "sequence", device: str = "cpu"):
+    def __init__(self, k: int | None, projection: bool = True, mode: Literal["sequence", "variant"] = "sequence", quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CPU"):
         super().__init__()
-        if device == "cuda" and not torch.cuda.is_available():
-            device = "cpu"
-        self.device = device
+        self.quant = quant
+        if self.quant == "CPU":
+            self.device = torch.device("cpu")
+        elif torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        else:
+            self.device = torch.device("cpu")
+            self.quant = "CPU"
+            print(f"[Warning] GPU not available, using CPU.")
+   
         self.mode = mode
         self.projection = projection
-        if self.device == "cpu":
-            self.trunk = get_sei_trunk_q()
-            self.head = get_sei_head_llra_q(k)
-        else:
-            self.trunk = sm.get_sei_trunk().load_weights()
-            self.head = get_sei_head_llra(k)
-            
+
+        self.trunk = get_sei_trunk(self.quant)
+        self.head = get_sei_head_llra(k, self.quant)
         if self.projection:
-            self.proj = sm.get_sei_projection().load_weights()
-            self.proj.set_mode(mode)
-        self.to(device)
+            self.proj = get_sei_projection(self.quant, mode)
+
+            
+        self.to(self.device)
 
     def set_mode(self, mode):
         if mode != "sequence" and mode != "variant":
@@ -116,3 +119,43 @@ class Sei_LLRA(nn.Module):
 
         return out
 
+
+
+import torch
+import torch.nn as nn
+import bitsandbytes as bnb
+
+
+def convert_to_int8(model, device='cuda'):
+    """
+    Convert model Linear layers to INT8.
+    """
+    model = model.cpu().eval()  # Add eval()
+    
+    for name, module in model.named_modules():
+        if isinstance(module, nn.Linear):
+            # Get parent module
+            parts = name.rsplit('.', 1)
+            parent = model if len(parts) == 1 else model.get_submodule(parts[0])
+            child_name = parts[-1]
+            
+            # Create INT8 layer
+            int8_layer = bnb.nn.Linear8bitLt(
+                module.in_features,
+                module.out_features,
+                bias=module.bias is not None,
+                has_fp16_weights=False,
+                threshold=6.0
+            )
+            
+            # Detach weights to remove gradient tracking
+            int8_layer.weight = bnb.nn.Int8Params(
+                module.weight.data.detach().contiguous(),
+                requires_grad=False
+            )
+            if module.bias is not None:
+                int8_layer.bias = nn.Parameter(module.bias.data.detach().clone(), requires_grad=False)
+            
+            setattr(parent, child_name, int8_layer)
+    
+    return model.to(device)

@@ -8,11 +8,12 @@ dist/seillra.egg-info/SOURCES.txt
 dist/seillra.egg-info/dependency_links.txt
 dist/seillra.egg-info/requires.txt
 dist/seillra.egg-info/top_level.txt
-dist/seillra/__pycache__/__init__.cpython-312.pyc
 dist/seillra/dat/config.yaml
+dist/seillra/dat/histone_inds.npy
+dist/seillra/dat/seqclass.names
 dist/seillra/src/download_from_gdrive.py
 dist/seillra/src/get_models.py
 dist/seillra/src/model_loading.py
 dist/seillra/src/model_wrappers.py
 dist/seillra/src/sei_head_llra.py
-dist/seillra/src/__pycache__/get_models.cpython-312.pyc
+dist/seillra/src/sei_parts.py

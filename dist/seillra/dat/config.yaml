@@ -1,7 +1,21 @@
-version: 1.3
+version: 1.4
 app_name: "seillra"
+fn_trunk_wts: "https://drive.google.com/uc?export=download&id=1SvbtVTrZZFHjAIiYQdYoDScYxMeEWe8t"
+fn_trunk_sha: "https://drive.google.com/uc?export=download&id=12w_52GRPuowtkR9_FFuk_rkQLp4Uy4oo"
+fn_head_wts: "https://drive.google.com/uc?export=download&id=1Q483wsZgh27TVbgTlGv1Z2m88xboEDM5"
+fn_head_sha: "https://drive.google.com/uc?export=download&id=1Qvbt1odXKU7b8INMZA-tl5AUMW-9KGax"
+fn_projection_wts: "https://drive.google.com/uc?export=download&id=1evPQSYXzuzkESqlAryPa72DyxkNnK2lp"
+fn_projection_sha: "https://drive.google.com/uc?export=download&id=1xUSrx79vBn4J_hcD-qhPsQgFgZYtWLay"
+
+
 fn_trunk_q-random-5k_wts: "https://drive.google.com/uc?export=download&id=1MTTLYGQN_SL80MvkAhHPqPvpYkX5QCLu"
 fn_trunk_q-random-5k_sha: "https://drive.google.com/uc?export=download&id=1JxPsYmjXSHs9-3WdojWICVaV8RmVd1ws"
+fn_head_q-random-5k_wts: "https://drive.google.com/uc?export=download&id=1mKJ7s1GuZ-gCoNrjhumkXxFckTQdNzrT"
+fn_head_q-random-5k_sha: "https://drive.google.com/uc?export=download&id=1avu4f_vVy_NvYHBG3YE5tOCZlBpoqJT-"
+fn_projection_q-random-5k_wts: "https://drive.google.com/uc?export=download&id=1A26IShEN5OiK-hDMn-sQRM3Ye792_9T0"
+fn_projection_q-random-5k_sha: "https://drive.google.com/uc?export=download&id=1rOU6J9bdohuFxo-nxvAiJL0mvkZkaI7A"
+
+
 fn_head_lora_1_wts: "https://drive.google.com/uc?export=download&id=1G666uQTEm3o7A0rH83MI-CKoo2IZ7w--"
 fn_head_lora_1_sha: "https://drive.google.com/uc?export=download&id=11zh_Lqq7gtSuK9dCeNPuhJIuEVv22wF9"
 fn_head_lora_2_wts: "https://drive.google.com/uc?export=download&id=1fzvEq-bPdgdyEQlA_BGorfpgrfgVzi0b"
