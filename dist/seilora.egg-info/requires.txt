@@ -1,8 +1,0 @@
-torch
-numpy
-scipy
-requests
-platformdirs
-tqdm
-pyyaml
-seimodel@ git+https://github.com/kostkalab/seimodel.git
