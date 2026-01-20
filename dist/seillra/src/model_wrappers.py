@@ -18,6 +18,8 @@ from typing import Optional, Literal
 class Sei_LLRA(nn.Module):
     def __init__(self, k: int, projection: bool = True, mode: Literal["sequence", "variant"] = "sequence", device: str = "cpu"):
         super().__init__()
+        if device == "cuda" and not torch.cuda.is_available():
+            device = "cpu"
         self.device = device
         self.mode = mode
         self.projection = projection
@@ -31,7 +33,7 @@ class Sei_LLRA(nn.Module):
         if self.projection:
             self.proj = sm.get_sei_projection().load_weights()
             self.proj.set_mode(mode)
-        self.device = device
+        self.to(device)
 
     def set_mode(self, mode):
         if mode != "sequence" and mode != "variant":
