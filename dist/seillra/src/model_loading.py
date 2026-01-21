@@ -258,3 +258,59 @@ def functional_load_model_state_dict(model_cls: type[StateDictLoadable], *, url_
                                      timeout=timeout)
     model = model_cls()
     return load_state_dict_from_path(model, weight_path, strict=strict)
+
+
+def load_quantized_model(
+    *,
+    url_wts: str,
+    url_wts_sha: str,
+    app_name: str,
+    version: str = "latest",
+    expected_sha256: Optional[str] = None,
+    verify: bool = True,
+    timeout: int = 30,
+    device: str = "cuda:0"
+) -> torch.jit.ScriptModule:
+    """
+    Load a quantized TensorRT model from URL.
+    
+    Unlike load_model_state_dict, this loads a complete TorchScript model
+    (not just weights), since TensorRT engines are self-contained.
+    """
+    try:
+        import torch_tensorrt
+        torch_tensorrt.runtime.set_multi_device_safe_mode(True)
+    except ImportError:
+        raise ImportError(
+            "torch_tensorrt is required to load quantized models. "
+            "Install with: pip install torch-tensorrt"
+        )
+    cache_dir = resolve_cache_dir(app_name, version)
+    session = get_session()
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    
+    expected = read_or_fetch_checksum(
+        url_wts_sha=url_wts_sha,
+        cache_dir=cache_dir,
+        session=session,
+        expected=expected_sha256,
+        verify=verify,
+        timeout=timeout
+    )
+    
+    weight_path = ensure_weight_file(
+        url_wts=url_wts,
+        cache_dir=cache_dir,
+        session=session,
+        expected_sha256=expected,
+        verify=verify,
+        timeout=timeout
+    )
+    
+    logger.info(f"Loading quantized TensorRT model from {weight_path}")
+    # model = torch.jit.load(str(weight_path), map_location=device)
+    model = torch.jit.load(str(weight_path))
+    model.eval()
+    logger.info(f"Quantized model loaded")
+    
+    return model

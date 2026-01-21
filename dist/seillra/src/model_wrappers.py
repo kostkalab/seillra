@@ -15,9 +15,10 @@ from typing import Optional, Literal
 
 # from seimodel.src import get_seimodels as sm
 class Sei_LLRA(nn.Module):
-    def __init__(self, k: int | None, projection: bool = True, mode: Literal["sequence", "variant"] = "sequence", quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CPU"):
+    def __init__(self, k: int | None, projection: bool = True, mode: Literal["sequence", "variant"] = "sequence", quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = None, compile: bool = False):
         super().__init__()
         self.quant = quant
+        self.compile = compile
         if self.quant == "CPU":
             self.device = torch.device("cpu")
         elif torch.cuda.is_available():
@@ -30,10 +31,10 @@ class Sei_LLRA(nn.Module):
         self.mode = mode
         self.projection = projection
 
-        self.trunk = get_sei_trunk(self.quant)
-        self.head = get_sei_head_llra(k, self.quant)
+        self.trunk = get_sei_trunk(self.quant, self.compile)
+        self.head = get_sei_head_llra(k, self.quant, self.compile)
         if self.projection:
-            self.proj = get_sei_projection(self.quant, mode)
+            self.proj = get_sei_projection(self.quant, mode, self.compile)
 
             
         self.to(self.device)
