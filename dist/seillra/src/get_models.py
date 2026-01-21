@@ -234,8 +234,9 @@ def get_sei_projection(quant: Literal["CPU", "GPU_fp16", "GPU_int8", None] = "CP
                 app_name=APP_NAME,
                 version=VERSION
             )
-            model.set_mode(mode)
-            return QuantizedSeiProjection(model)
+            quantized_model = QuantizedSeiProjection(model)
+            quantized_model.set_mode(mode)
+            return quantized_model
     else:
         from .sei_parts import SeiProjection
         stm = SeiProjection()

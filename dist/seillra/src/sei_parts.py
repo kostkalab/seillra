@@ -492,6 +492,70 @@ class QuantizedSeiProjection(nn.Module):
         super(QuantizedSeiProjection, self).__init__()
 
         self.model = model
+        weight_norm = self._compute_weight_norm()
+        if weight_norm is not None:
+            self.register_buffer("_weight_norm", weight_norm)
+        else:
+            self._weight_norm = None
+        self.set_mode("sequence")
 
     def forward(self, x):
-        return self.model(x)
+        if self.mode == "sequence":
+            return self._normalize(self.model(x))
+        elif self.mode == "variant":
+            ref, alt = x
+            ref_adj, alt_adj = sc_hnorm_varianteffect(
+                ref, alt, QuantizedSeiProjection.histone_indices, ref.device
+            )
+            ref_out = self._normalize(self.model(ref_adj))
+            alt_out = self._normalize(self.model(alt_adj))
+            return (ref_out, alt_out)
+        else:
+            raise ValueError(
+                f"Mode options are: 'sequence' or 'variant'. Received '{self.mode}'."
+            )
+
+    def set_mode(self, mode):
+        if mode in ("sequence", "variant"):
+            self.mode = mode
+        else:
+            raise ValueError(
+                f"Mode options are: 'sequence' or 'variant'. Received '{mode}'."
+            )
+
+    def _normalize(self, tensor: torch.Tensor) -> torch.Tensor:
+        weight_norm = getattr(self, "_weight_norm", None)
+        if not torch.is_tensor(weight_norm):
+            return tensor
+        return tensor / weight_norm.to(tensor.device)
+
+    def _compute_weight_norm(self) -> torch.Tensor | None:
+        projector = getattr(self.model, "projector", None)
+        if projector is None:
+            return None
+
+        weight_tensor = None
+        weight_attr = getattr(projector, "weight", None)
+        if callable(weight_attr):
+            try:
+                weight_tensor = weight_attr()
+            except TypeError:
+                weight_tensor = None
+        elif isinstance(weight_attr, torch.Tensor):
+            weight_tensor = weight_attr
+        elif isinstance(weight_attr, nn.Parameter):
+            weight_tensor = weight_attr.data
+
+        if weight_tensor is None and hasattr(projector, "_weight"):
+            weight_tensor = projector._weight
+
+        if weight_tensor is None and hasattr(projector, "_packed_params"):
+            packed = projector._packed_params
+            if hasattr(packed, "_weight"):
+                weight_tensor = packed._weight
+
+        if weight_tensor is None or not torch.is_tensor(weight_tensor):
+            return None
+        if weight_tensor.is_quantized:
+            weight_tensor = weight_tensor.dequantize()
+        return weight_tensor.norm(dim=1)
