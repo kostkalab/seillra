@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: seillra
-Version: 1.4.8
+Version: 1.4.10
 Summary: Easy access to a low-rank approximation of Sei
 Description-Content-Type: text/markdown
 License-File: LICENSE.txt
@@ -74,7 +74,7 @@ Select from ranks 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, or None (fo
 
 For more detailed examples including applying SeiLLRA to data, please see the following notebooks:
 
-- Chromatin states and sequence classes: [basic_notebook.ipynb](./docs/basic_usage.ipynb)
-- Variant effects: [variant_notebook.ipynb](./docs/variant_usage.ipynb)
+- Chromatin states and sequence classes: [basic_notebook.ipynb](./dist/seillra/doc/basic_usage.ipynb)
+- Variant effects: [variant_notebook.ipynb](./dist/seillra/doc/variant_usage.ipynb)
 
 
