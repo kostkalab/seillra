@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "seillra"
-version = "1.5.1"
+version = "1.5.2"
 description = "Easy access to a low-rank approximation of Sei"
 readme = "README_dist.md"
 dependencies = [
