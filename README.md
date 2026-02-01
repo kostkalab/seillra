@@ -1,7 +1,13 @@
 
 ## Introduction
 
-This package exposes the Sei trunk–head–projection pipeline where the head is replaced with post-hoc low-rank linear layers, and makes both full-precision and quantized (CPU/GPU-friendly) variants of each sub-model available. Refer to the [Sei-LLRA preprint](tbd) for architectural and training details.
+This package exposes the Sei trunk–head–projection pipeline where the head is replaced with post-hoc low-rank linear layers, and makes both full-precision and quantized (CPU/GPU-friendly) variants of each sub-model available. Refer to the Sei-LLRA preprint for architectural and training details:
+
+**When Less Is Enough: Low-Rank Structure in DNA Sequence-to-Function Models**
+E Gilfeather, M Chikina, D Kostka<
+bioRxiv, 2026.01.21.700827
+[View on bioRxiv](https://www.biorxiv.org/content/early/2026/01/23/2026.01.21.700827)
+
 
 
 
