@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: seillra
-Version: 1.5.6
+Version: 1.5.7
 Summary: Easy access to a low-rank approximation of Sei
 Description-Content-Type: text/markdown
 License-File: LICENSE.txt
@@ -21,9 +21,9 @@ Dynamic: license-file
 
 This package exposes the Sei trunk–head–projection pipeline where the head is replaced with post-hoc low-rank linear layers, and makes both full-precision and quantized (CPU/GPU-friendly) variants of each sub-model available. Refer to the Sei-LLRA preprint for architectural and training details:
 
-**When Less Is Enough: Low-Rank Structure in DNA Sequence-to-Function Models**
-E Gilfeather, M Chikina, D Kostka<
-bioRxiv, 2026.01.21.700827
+**When Less Is Enough: Low-Rank Structure in DNA Sequence-to-Function Models**\
+E Gilfeather, M Chikina, D Kostka\
+bioRxiv, 2026.01.21.700827\
 [View on bioRxiv](https://www.biorxiv.org/content/early/2026/01/23/2026.01.21.700827)
 
 
@@ -82,7 +82,7 @@ Select from ranks 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, or None (fo
 
 For more detailed examples including applying SeiLLRA to data, please see the following notebooks:
 
-- Chromatin states and sequence classes: [basic_notebook.ipynb](./dist/seillra/doc/basic_usage.ipynb)
-- Variant effects: [variant_notebook.ipynb](./dist/seillra/doc/variant_usage.ipynb)
+- Chromatin states and sequence classes: [basic_usage.ipynb](./dist/seillra/doc/basic_usage.ipynb)
+- Variant effects: [variant_usage.ipynb](./dist/seillra/doc/variant_usage.ipynb), [variant_example.ipynb](./dist/seillra/doc/variant_usage.ipynb)
 
 
